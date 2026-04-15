@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>More Espresso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    :root{
+      --blue:#1565C0;--blue-h:#1976D2;--blue-dim:rgba(21,101,192,.09);
+      --blue-b:rgba(21,101,192,.22);--white:#fff;--off:#F8FAFD;
+      --g50:#F1F5F9;--g100:#E2E8F0;--g300:#94A3B8;--g500:#64748B;
+      --g700:#334155;--g900:#0F172A;--red:#DC2626;--green:#16A34A;
+      --sh-sm:0 1px 3px rgba(0,0,0,.08);--sh-md:0 4px 16px rgba(0,0,0,.10);
+      --sh-lg:0 8px 32px rgba(0,0,0,.12);--sh-b:0 4px 20px rgba(21,101,192,.2);
+      --r:8px;--rl:14px;--tr:.22s cubic-bezier(.4,0,.2,1);
+    }
+    body{font-family:'Tajawal',sans-serif;background:var(--white);color:var(--g700);font-size:15px;line-height:1.6;direction:rtl}
+    a{text-decoration:none;color:inherit}button{cursor:pointer;border:none;background:none;font-family:inherit}
+    img{max-width:100%;display:block}ul{list-style:none}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--g50)}
+    ::-webkit-scrollbar-thumb{background:var(--g300);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--blue)}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+    /* NAV */
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--white);border-bottom:1px solid var(--g100);box-shadow:var(--sh-sm);transition:box-shadow var(--tr)}
+    .navbar.scrolled{box-shadow:var(--sh-md)}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+    .nav-logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--g900)}
+    .nav-logo img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--blue-b)}
+    .nav-logo span{color:var(--blue)}
+    .nav-links{display:flex;align-items:center;gap:4px}
+    .nav-links a{padding:7px 15px;border-radius:6px;font-size:14px;font-weight:500;color:var(--g500);transition:var(--tr)}
+    .nav-links a:hover,.nav-links a.active{color:var(--blue);background:var(--blue-dim)}
+    .nav-actions{display:flex;align-items:center;gap:8px}
+    .cart-btn{position:relative;width:40px;height:40px;border-radius:8px;background:var(--g50);border:1px solid var(--g100);color:var(--g700);font-size:18px;display:flex;align-items:center;justify-content:center;transition:var(--tr)}
+    .cart-btn:hover{background:var(--blue-dim);border-color:var(--blue-b);color:var(--blue)}
+    .cart-count{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;background:var(--red);color:#fff;border-radius:9px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff;opacity:0;transform:scale(0);transition:var(--tr)}
+    .cart-count.visible{opacity:1;transform:scale(1)}
+    .hamburger{display:none;flex-direction:column;gap:5px;width:28px;padding:4px;cursor:pointer}
+    .hamburger span{display:block;height:2px;background:var(--g700);border-radius:1px;transition:var(--tr)}
+    .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+    .hamburger.open span:nth-child(2){opacity:0}
+    .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+    .mobile-nav{display:none;flex-direction:column;border-top:1px solid var(--g100);background:var(--white)}
+    .mobile-nav a{padding:13px 20px;font-size:14px;font-weight:500;color:var(--g500);border-right:3px solid transparent;transition:var(--tr)}
+    .mobile-nav a:hover,.mobile-nav a.active{color:var(--blue);border-right-color:var(--blue);background:var(--blue-dim)}
+
+    /* HERO */
+    .hero{padding-top:64px;background:linear-gradient(160deg,var(--white) 55%,var(--off) 100%);min-height:88vh;display:flex;align-items:center;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-120px;left:-120px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(21,101,192,.06) 0%,transparent 70%);pointer-events:none}
+    .hero-content{max-width:580px;margin:0 auto;text-align:center;padding:64px 0}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;background:var(--blue-dim);color:var(--blue);font-size:13px;font-weight:600;margin-bottom:24px;border:1px solid var(--blue-b)}
+    .hero-title{font-size:clamp(34px,5vw,56px);font-weight:700;line-height:1.15;color:var(--g900);margin-bottom:20px}
+    .hero-title em{font-style:normal;color:var(--blue)}
+    .hero-subtitle{font-size:16px;color:var(--g500);line-height:1.8;margin-bottom:36px;font-weight:300}
+    .hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:var(--r);font-size:14px;font-weight:600;transition:var(--tr);cursor:pointer;border:1.5px solid transparent}
+    .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .btn-primary:hover{background:var(--blue-h);box-shadow:var(--sh-b);transform:translateY(-1px)}
+    .btn-outline{background:transparent;color:var(--blue);border-color:var(--blue-b)}
+    .btn-outline:hover{background:var(--blue-dim);border-color:var(--blue)}
+    .btn-sm{padding:8px 16px;font-size:13px}
+
+    /* SECTIONS */
+    .section{padding:72px 0}
+    .section-header{text-align:center;margin-bottom:48px}
+    .section-label{display:inline-block;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+    .section-title{font-size:clamp(24px,3.5vw,36px);font-weight:700;color:var(--g900);margin-bottom:12px}
+    .section-subtitle{font-size:15px;color:var(--g500);max-width:500px;margin:0 auto;line-height:1.8}
+
+    /* BREADCRUMBS */
+    .breadcrumbs{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--g300);text-transform:uppercase;letter-spacing:.5px;padding:12px 0 24px}
+    .breadcrumbs a{color:var(--g300);transition:color var(--tr)}.breadcrumbs a:hover{color:var(--blue)}
+    .breadcrumbs .sep{transform:scaleX(-1);display:inline-block}.breadcrumbs .current{color:var(--g500)}
+
+    /* TABS */
+    .cat-tabs-wrap{position:sticky;top:64px;z-index:10;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--g100);padding:0;margin:0 -20px}
+    .cat-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:12px 20px;cursor:grab}
+    .cat-tabs:active{cursor:grabbing}
+    .cat-tab{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 18px;border-radius:20px;font-size:14px;font-weight:500;color:var(--g500);background:var(--g50);border:1.5px solid var(--g100);transition:var(--tr);cursor:pointer}
+    .cat-tab:hover{border-color:var(--blue-b);color:var(--blue);background:var(--blue-dim)}
+    .cat-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:var(--sh-b)}
+
+    /* PRODUCTS */
+    .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;margin-top:24px}
+    .product-card{background:var(--white);border-radius:var(--rl);border:1.5px solid var(--g100);overflow:hidden;cursor:pointer;transition:var(--tr);box-shadow:var(--sh-sm)}
+    .product-card:hover{border-color:var(--blue-b);box-shadow:var(--sh-md);transform:translateY(-3px)}
+    .product-card-img{width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--g50);position:relative}
+    .product-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .45s ease}
+    .product-card:hover .product-card-img img{transform:scale(1.05)}
+    .sale-badge{position:absolute;top:10px;right:10px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px}
+    .sale-badge.red{background:var(--red)}
+    .product-card-body{padding:16px 18px 18px}
+    .product-card-category{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:5px}
+    .product-card-name{font-size:16px;font-weight:600;color:var(--g900);margin-bottom:6px;line-height:1.3}
+    .product-card-desc{font-size:13px;color:var(--g500);margin-bottom:14px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .product-card-footer{display:flex;align-items:center;justify-content:space-between}
+    .product-price{display:flex;align-items:baseline;gap:7px}
+    .product-price .current{font-size:18px;font-weight:700;color:var(--blue)}
+    .product-price .old{font-size:13px;color:var(--g300);text-decoration:line-through}
+    .add-to-cart{width:36px;height:36px;border-radius:8px;background:var(--blue-dim);color:var(--blue);font-size:20px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--blue-b);transition:var(--tr)}
+    .add-to-cart:hover{background:var(--blue);color:#fff;box-shadow:var(--sh-b)}
+    .add-to-cart:disabled{opacity:.35;cursor:not-allowed}
+    .skeleton-card{height:310px;border-radius:var(--rl);background:var(--g100);animation:shimmer 1.4s infinite}
+    @keyframes shimmer{0%{opacity:1}50%{opacity:.5}100%{opacity:1}}
+
+    /* STAT CARDS */
+    .stat-cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px}
+    .stat-card{background:var(--white);border:1.5px solid var(--g100);border-radius:var(--rl);padding:28px 24px;text-align:center;box-shadow:var(--sh-sm);transition:var(--tr)}
+    .stat-card:hover{border-color:var(--blue-b);box-shadow:var(--sh-b);transform:translateY(-2px)}
+    .stat-card-value{font-size:40px;font-weight:700;color:var(--blue);margin-bottom:6px}
+    .stat-card-label{font-size:13px;color:var(--g500);font-weight:500}
+
+    /* AGENCIES — horizontal scroll (no animation) */
+    #agencies{background:var(--off);border-top:1px solid var(--g100);border-bottom:1px solid var(--g100);padding:36px 0}
+    #agencies .section-header{margin-bottom:20px}
+    /* Fav button on card */
+    .fav-btn{position:absolute;top:10px;left:10px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s ease;box-shadow:0 2px 8px rgba(0,0,0,.14);z-index:2;backdrop-filter:blur(4px)}
+    .fav-btn:hover{transform:scale(1.18);background:#fff}
+    .fav-btn.active{background:#fff0f3}
+    /* Fav tab */
+    .cat-tab.fav-tab{color:#e11d48;border-color:rgba(225,29,72,.22);background:rgba(225,29,72,.05)}
+    .cat-tab.fav-tab:hover{background:rgba(225,29,72,.1);border-color:rgba(225,29,72,.35)}
+    .cat-tab.fav-tab.active{background:#e11d48;color:#fff;border-color:#e11d48;box-shadow:0 4px 16px rgba(225,29,72,.3)}
+    /* Fav toast */
+    .toast.fav{border-color:rgba(225,29,72,.3)}.toast.fav .toast-icon{color:#e11d48}
+    /* Modal fav btn */
+    .modal-fav-btn{display:flex;align-items:center;gap:6px;padding:0 14px;height:44px;border-radius:var(--r);border:1.5px solid var(--g100);background:var(--g50);color:var(--g500);font-size:13px;font-weight:600;cursor:pointer;transition:var(--tr);flex-shrink:0;white-space:nowrap}
+    .modal-fav-btn:hover{border-color:rgba(225,29,72,.3);background:rgba(225,29,72,.06);color:#e11d48}
+    .modal-fav-btn.active{border-color:rgba(225,29,72,.35);background:rgba(225,29,72,.08);color:#e11d48}
+    /* Agency scroll strip */
+    .agencies-scroll-wrap{position:relative;width:100%;padding:8px 0}
+    .agencies-scroll-wrap::before,.agencies-scroll-wrap::after{content:'';position:absolute;top:0;bottom:0;width:72px;z-index:2;pointer-events:none}
+    .agencies-scroll-wrap::before{right:0;background:linear-gradient(to left,var(--off) 0%,transparent 100%)}
+    .agencies-scroll-wrap::after{left:0;background:linear-gradient(to right,var(--off) 0%,transparent 100%)}
+    .agencies-track{display:flex;gap:20px;overflow-x:auto;scroll-behavior:smooth;padding:12px 24px;scrollbar-width:none;-ms-overflow-style:none;align-items:center;cursor:grab;justify-content: center;}
+    .agencies-track::-webkit-scrollbar{display:none}
+    .agencies-track:active{cursor:grabbing}
+    img{pointer-events: none;
+    }
+    .agency-bubble{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:transform .22s ease;user-select:none}
+    .agency-bubble:hover .agency-bubble-img{box-shadow:0 8px 24px rgba(21,101,192,.22);border-color:var(--blue-b);transform:scale(1.08) translateY(-3px)}
+    .agency-bubble-img{width:80px;height:80px;border-radius:50%;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.10);border:2.5px solid var(--g100);background:var(--white);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;flex-shrink:0}
+    .agency-bubble-img img{width:100%;height:100%;object-fit:cover;display:block}
+    .agency-bubble-label{font-size:11px;font-weight:600;color:var(--g500);text-align:center;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .2s}
+    .agency-bubble:hover .agency-bubble-label{color:var(--blue)}
+
+    /* FOOTER */
+    .footer{background:var(--g900);color:rgba(255,255,255,.6);padding:40px 0;text-align:center}
+    .footer img{width:44px;height:44px;border-radius:50%;object-fit:cover;margin:0 auto 12px;border:2px solid rgba(255,255,255,.15)}
+    .footer-name{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+    .footer-text{font-size:13px}
+
+    /* CART SIDEBAR */
+    .cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;opacity:0;pointer-events:none;transition:opacity var(--tr)}
+    .cart-overlay.open{opacity:1;pointer-events:all}
+    .cart-sidebar{position:fixed;top:0;left:0;width:min(400px,100vw);height:100vh;background:var(--white);z-index:201;display:flex;flex-direction:column;border-right:1px solid var(--g100);box-shadow:var(--sh-lg);transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+    .cart-sidebar.open{transform:translateX(0)}
+    .cart-header{padding:18px 20px;border-bottom:1px solid var(--g100);display:flex;align-items:center;justify-content:space-between}
+    .cart-header h3{font-size:17px;font-weight:700;color:var(--g900)}
+    .cart-close{width:32px;height:32px;border-radius:6px;background:var(--g50);border:1px solid var(--g100);color:var(--g500);font-size:16px;display:flex;align-items:center;justify-content:center;transition:var(--tr)}
+    .cart-close:hover{background:var(--g100);color:var(--g900)}
+    .cart-items{flex:1;overflow-y:auto;padding:12px}
+    .cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--g300)}
+    .cart-empty-icon{font-size:40px}
+    .cart-item{display:flex;gap:12px;padding:12px;background:var(--g50);border-radius:var(--r);border:1px solid var(--g100);margin-bottom:8px;transition:var(--tr)}
+    .cart-item:hover{border-color:var(--blue-b)}
+    .cart-item-img{width:60px;height:60px;border-radius:6px;object-fit:cover;flex-shrink:0}
+    .cart-item-info{flex:1}
+    .cart-item-name{font-size:13px;font-weight:600;color:var(--g900);margin-bottom:3px}
+    .cart-item-price{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:6px}
+    .cart-item-controls{display:flex;align-items:center;gap:8px}
+    .qty-btn{width:24px;height:24px;border-radius:6px;background:var(--white);border:1.5px solid var(--g100);color:var(--g700);font-size:14px;display:flex;align-items:center;justify-content:center;transition:var(--tr)}
+    .qty-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+    .qty-display{font-size:13px;font-weight:600;color:var(--g900);min-width:20px;text-align:center}
+    .cart-item-remove{color:var(--g300);font-size:16px;transition:color var(--tr);padding:4px}
+    .cart-item-remove:hover{color:var(--red)}
+    .cart-footer{padding:16px 20px;border-top:1px solid var(--g100)}
+    .cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .cart-total .label{font-size:13px;font-weight:500;color:var(--g500)}
+    .cart-total .amount{font-size:22px;font-weight:700;color:var(--blue)}
+
+    /* MODALS */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity var(--tr)}
+    .modal-overlay.open{opacity:1;pointer-events:all}
+    .modal{background:var(--white);border-radius:var(--rl);width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-lg);transform:scale(.96);transition:transform var(--tr)}
+    .modal-overlay.open .modal{transform:scale(1)}
+    .modal-header{padding:22px 24px 18px;border-bottom:1px solid var(--g100)}
+    .modal-header h3{font-size:20px;font-weight:700;color:var(--g900);margin-bottom:4px}
+    .modal-header p{font-size:13px;color:var(--g500)}
+    .modal-body{padding:20px 24px}.modal-footer{padding:14px 24px 22px;display:flex;gap:10px}
+
+    /* PRODUCT MODAL */
+    .product-modal-inner{display:grid;grid-template-columns:1fr 1fr;gap:0;max-width:780px}
+    .product-modal-img{aspect-ratio:1;overflow:hidden;border-radius:var(--rl) 0 0 var(--rl);background:var(--g50)}
+    .product-modal-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+    .product-modal-img:hover img{transform:scale(1.04)}
+    .product-modal-body{padding:30px 26px;display:flex;flex-direction:column}
+    .product-modal-cat{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;font-weight:700}
+    .product-modal-name{font-size:22px;font-weight:700;color:var(--g900);line-height:1.2;margin-bottom:12px}
+    .product-modal-desc{font-size:14px;color:var(--g500);line-height:1.7;margin-bottom:20px;flex:1}
+    .product-modal-price{display:flex;align-items:baseline;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+    .product-modal-price .cur{font-size:30px;font-weight:700;color:var(--blue)}
+    .product-modal-price .old{font-size:15px;color:var(--g300);text-decoration:line-through}
+    .product-modal-price .disc{background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+    .product-modal-actions{display:flex;gap:10px}
+    .qty-control{display:flex;align-items:center;border:1.5px solid var(--g100);border-radius:var(--r);overflow:hidden}
+    .qty-control button{width:36px;height:44px;background:var(--g50);color:var(--g700);font-size:18px;display:flex;align-items:center;justify-content:center;transition:var(--tr)}
+    .qty-control button:hover{background:var(--blue);color:#fff}
+    .qty-control .qty-val{min-width:42px;text-align:center;font-size:15px;font-weight:600;color:var(--g900);background:var(--white);height:44px;display:flex;align-items:center;justify-content:center}
+    .out-of-stock-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.2);border-radius:var(--r);color:var(--red);font-size:13px}
+    @media(max-width:600px){.product-modal-inner{grid-template-columns:1fr;display:flex;flex-direction:column}.product-modal-img{border-radius:var(--rl) var(--rl) 0 0;max-height:230px}.product-modal-body{padding:18px}}
+
+    /* FORM */
+    .form-group{margin-bottom:16px}
+    .form-label{display:block;font-size:13px;font-weight:600;color:var(--g700);margin-bottom:6px}
+    .form-input,.form-textarea{width:100%;padding:10px 14px;background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);color:var(--g900);font-size:14px;font-family:inherit;outline:none;transition:var(--tr)}
+    .form-input:focus,.form-textarea:focus{border-color:var(--blue);background:var(--white);box-shadow:0 0 0 3px rgba(21,101,192,.08)}
+    .form-textarea{resize:vertical;min-height:70px}
+    .form-input::placeholder,.form-textarea::placeholder{color:var(--g300)}
+    .order-summary-box{background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:14px;margin-top:4px}
+    .order-summary-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g300);margin-bottom:10px}
+    .order-divider{border:none;border-top:1px solid var(--g100);margin:10px 0}
+    .order-total-row{display:flex;justify-content:space-between;align-items:center}
+    .order-total-row .t-label{font-size:13px;color:var(--g500)}
+    .order-total-row .t-amount{font-size:22px;font-weight:700;color:var(--blue)}
+
+    /* SUCCESS */
+    .success-screen{position:fixed;inset:0;background:rgba(255,255,255,.97);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .4s ease}
+    .success-screen.show{opacity:1;pointer-events:all}
+    .success-card{text-align:center;max-width:400px;width:100%;background:var(--white);border-radius:var(--rl);padding:48px 36px;box-shadow:var(--sh-lg);border:1.5px solid var(--g100)}
+    .success-icon{width:72px;height:72px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;animation:popIn .5s cubic-bezier(.175,.885,.32,1.275)}
+    @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+    .success-card h2{font-size:26px;font-weight:700;color:var(--g900);margin-bottom:10px}
+    .success-card p{font-size:14px;color:var(--g500);line-height:1.7;margin-bottom:28px}
+
+    /* TOAST */
+    .toast-container{position:fixed;bottom:20px;left:20px;z-index:500;display:flex;flex-direction:column;gap:8px}
+    .toast{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:var(--r);background:var(--white);box-shadow:var(--sh-md);font-size:14px;font-weight:500;color:var(--g900);border:1.5px solid var(--g100);max-width:340px;animation:slideInToast .3s ease}
+    .toast.success{border-color:rgba(22,163,74,.3)}.toast.success .toast-icon{color:var(--green)}
+    .toast.error{border-color:rgba(220,38,38,.3)}.toast.error .toast-icon{color:var(--red)}
+    .toast.info .toast-icon{color:var(--blue)}
+    .toast.removing{animation:slideOutToast .3s ease forwards}
+    @keyframes promoFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes slideInToast{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes slideOutToast{from{transform:translateX(0);opacity:1}to{transform:translateX(-100%);opacity:0}}
+
+    .empty-state{text-align:center;padding:64px 20px;color:var(--g300)}
+    .empty-state-icon{font-size:48px;margin-bottom:14px}
+    .empty-state h3{font-size:20px;font-weight:600;color:var(--g500);margin-bottom:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}.spin{animation:spin 1s linear infinite;display:inline-block}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}.fade-in-up{animation:fadeInUp .5s ease both}
+
+    @media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}.mobile-nav.open{display:flex}.products-grid,.agencies-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}.section{padding:52px 0}}
+      .fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+    @media(max-width:480px){.container{padding:0 14px}.hero-title{font-size:30px}.products-grid,.agencies-grid{grid-template-columns:1fr 1fr;gap:10px}}
+.cat-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin; /* شريط رفيع في فايرفوكس */
+  scrollbar-color: var(--blue) var(--g100); /* ✅ أضف هذا السطر - اللون الأزرق للسكة وفايرفوكس */
+  padding: 12px 20px 16px 20px;
+  cursor: grab;
+  margin-bottom: 4px;
+}
+
+/* لجعل الشريط يظهر بشكل أفضل في Webkit (Chrome, Edge, Safari) */
+.cat-tabs::-webkit-scrollbar {
+  height: 5px;
+}
+
+.cat-tabs::-webkit-scrollbar-track {
+  background: var(--g100);
+  border-radius: 10px;
+}
+
+.cat-tabs::-webkit-scrollbar-thumb {
+  background: var(--blue); /* ✅ أزرق */
+  border-radius: 10px;
+}
+
+.cat-tabs::-webkit-scrollbar-thumb:hover {
+  background: var(--blue-h); /* ✅ أزرق غامق عند المرور */
+}
+    
+
+/* إخفاء الأقنعة الوهمية (pseudo-elements) التي تخفي الشريط */
+.agencies-scroll-wrap::before,
+.agencies-scroll-wrap::after {
+  display: none !important;
+}
+
+/* تأكد أن العنصر الأب لا يقطع المحتوى */
+.agencies-scroll-wrap {
+  overflow: visible !important;
+}
+
+/* شريط التمرير لـ agencies-track */
+.agencies-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  padding: 12px 24px 20px 24px;
+  cursor: grab;
+  align-items: center;
+  scrollbar-width: auto !important; /* إجبار ظهور الشريط */
+}
+
+/* تنسيق الشريط في Chrome/Safari/Edge */
+.agencies-track::-webkit-scrollbar {
+  height: 6px !important;
+  display: block !important; /* إجبار الظهور */
+}
+
+.agencies-track::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.agencies-track::-webkit-scrollbar-thumb {
+  background: #1565C0 !important; /* أزرق */
+  border-radius: 10px;
+}
+
+.agencies-track::-webkit-scrollbar-thumb:hover {
+  background: #1976D2 !important;
+}
+
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <img src="./500821897_17844280461495063_6003445139820900726_n.jpg" alt="More Espresso">
+        More <span>Espresso</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#home" class="active">الرئيسية</a></li>
+        <li><a href="#agencies">وكالات</a></li>
+        <li><a href="#products">المنتجات</a></li>
+        <li><a href="#about">من نحن</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="cart-btn" id="cartToggle" title="السلة">🛒<span class="cart-count" id="cartCount">0</span></button>
+        <button class="hamburger" id="hamburger" aria-label="القائمة"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#home" class="active">الرئيسية</a>
+      <a href="#agencies">وكالات</a>
+      <a href="#products">المنتجات</a>
+      <a href="#about">من نحن</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero" id="home">
+  <div class="container">
+    <div class="hero-content fade-in-up">
+      <div class="hero-badge">✦ More Espresso</div>
+      <h1 class="hero-title">اكتشف عالم<br><em>More Espresso</em></h1>
+      <p class="hero-subtitle">مجموعتنا المختارة بعناية من أجود اكسسوارات القهوة، من آلات الإسبريسو الفاخرة إلى أدوات التقطير اليدوية الحرفية.</p>
+      <div class="hero-cta">
+        <a href="#products" class="btn btn-primary">تسوق الآن</a>
+        <a href="#about" class="btn btn-outline">اعرف المزيد</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="fade-in" id="agencies" style="display:none">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:16px">
+      <p class="section-subtitle">الوكالات والعلامات التجارية التي نمثلها ونفخر بها</p>
+    </div>
+  </div>
+  <div class="agencies-scroll-wrap">
+    <div class="agencies-track" id="agenciesTrack"></div>
+  </div>
+</section>
+
+<section class="section fade-in" id="products">
+  <div class="container">
+    <div class="breadcrumbs"><a href="#home">الرئيسية</a><span class="sep">›</span><span class="current" id="breadcrumbCurrent">جميع المنتجات</span></div>
+    <div class="section-header">
+      <div class="section-label">مجموعتنا</div>
+      <h2 class="section-title">اكسسوارات القهوة</h2>
+      <p class="section-subtitle">كل ما تحتاجه لتجربة قهوة استثنائية في منزلك</p>
+    </div>
+    <div class="cat-tabs-wrap">
+      <div class="cat-tabs" id="catTabs">
+        <button class="cat-tab active" data-cat="all"><span>☕</span> الكل</button>
+        <button class="cat-tab" data-cat="discounts"><span>🏷️</span> الخصومات</button>
+        <button class="cat-tab fav-tab" data-cat="favorites"><span>❤️</span> المفضلة</button>
+      </div>
+    </div>
+    <div class="products-grid" id="productsGrid">
+      <div class="skeleton-card"></div><div class="skeleton-card"></div>
+      <div class="skeleton-card"></div><div class="skeleton-card"></div>
+      <div class="skeleton-card"></div><div class="skeleton-card"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section fade-in" id="about">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">قصتنا</div>
+      <h2 class="section-title">شغف القهوة في كل فنجان</h2>
+      <p class="section-subtitle">نحن More Espresso، متجرك المتخصص في أجود اكسسوارات القهوة. نقدم لك تجربة قهوة استثنائية من أفضل الماكينات والأدوات.</p>
+    </div>
+    <div class="stat-cards-grid">
+      <div class="stat-card fade-in-up"><div class="stat-card-value">٥٠+</div><div class="stat-card-label">منتج مختار</div></div>
+      <div class="stat-card fade-in-up"><div class="stat-card-value">١٠٠٪</div><div class="stat-card-label">جودة مضمونة</div></div>
+      <div class="stat-card fade-in-up"><div class="stat-card-value">٢٤/٧</div><div class="stat-card-label">دعم العملاء</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer fade-in">
+  <div class="container">
+    <img src="./500821897_17844280461495063_6003445139820900726_n.jpg" alt="More Espresso">
+    <div class="footer-name">More Espresso</div>
+    <p class="footer-text">جميع الحقوق محفوظة © 2025</p>
+  </div>
+</footer>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header"><h3>🛒 سلة التسوق</h3><button class="cart-close" id="cartClose">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total"><span class="label">الإجمالي</span><span class="amount" id="cartTotal">0 د.ع</span></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" id="checkoutBtn">إتمام الشراء ←</button>
+  </div>
+</aside>
+
+<div class="modal-overlay" id="productModalOverlay">
+  <div class="modal product-modal-inner">
+    <div class="product-modal-img"><img id="pmImg" src="" alt=""></div>
+    <div class="product-modal-body">
+      <button class="cart-close" id="pmClose" style="position:absolute;top:14px;left:14px">✕</button>
+      <div class="product-modal-cat" id="pmCat"></div>
+      <div class="product-modal-name" id="pmName"></div>
+      <div class="product-modal-desc" id="pmDesc"></div>
+      <div class="product-modal-price">
+        <span class="cur" id="pmPrice"></span>
+        <span class="old" id="pmOld" style="display:none"></span>
+        <span class="disc" id="pmDisc" style="display:none"></span>
+      </div>
+      <div class="product-modal-actions" id="pmActions" style="flex-wrap:wrap"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="orderModalOverlay">
+  <div class="modal">
+    <div class="modal-header"><h3>تأكيد الطلب</h3><p>أدخل بياناتك وسنتواصل معك في أقرب وقت</p></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">الاسم الكامل *</label><input type="text" class="form-input" id="orderName" placeholder="أدخل اسمك الكامل" autocomplete="name"></div>
+      <div class="form-group"><label class="form-label">رقم الهاتف *</label><input type="tel" class="form-input" id="orderPhone" placeholder="07xxxxxxxxx" autocomplete="tel"></div>
+      <div class="form-group"><label class="form-label">موقع التوصيل *</label><input type="text" class="form-input" id="orderLocation" placeholder="المدينة، الحي، الشارع..."></div>
+      <div class="form-group"><label class="form-label">ملاحظات إضافية (اختياري)</label><textarea class="form-textarea" id="orderNotes" placeholder="أي تفاصيل إضافية..."></textarea></div>
+      <div class="form-group">
+        <label class="form-label">بروموكود (اختياري)</label>
+        <div style="display:flex;gap:8px">
+          <input type="text" class="form-input" id="promoCodeInput" placeholder="أدخل الكود هنا..." style="flex:1;text-transform:uppercase">
+          <button class="btn btn-outline btn-sm" id="applyPromoBtn" style="flex-shrink:0;padding:10px 18px">تطبيق</button>
+        </div>
+        <div id="promoResult" style="margin-top:8px;font-size:13px"></div>
+      </div>
+      <div class="order-summary-box">
+        <div class="order-summary-label">ملخص الطلب</div>
+        <div id="orderSummaryItems"></div>
+        <hr class="order-divider">
+        <div class="order-total-row"><span class="t-label">الإجمالي</span><span class="t-amount" id="orderSummaryTotal" style="display:flex;align-items:baseline;gap:8px"></span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="cancelOrderBtn" style="flex:1;justify-content:center">إلغاء</button>
+      <button class="btn btn-primary" id="confirmOrderBtn" style="flex:2;justify-content:center">✓ تأكيد الطلب</button>
+    </div>
+  </div>
+</div>
+
+<div class="success-screen" id="successScreen">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h2>تم استلام طلبك!</h2>
+    <p>شكراً لك على ثقتك بنا.<br>سيتواصل معك فريقنا على رقم هاتفك في أقرب وقت لتأكيد الطلب وترتيب التوصيل.</p>
+    <button class="btn btn-primary" style="justify-content:center;width:100%" onclick="closeSuccess()">العودة للتسوق</button>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="app_index.js" defer></script>
+</body>
+</html>
