@@ -24,10 +24,10 @@ function toggleFav(id, event) {
   if (event) event.stopPropagation();
   if (isFav(id)) {
     favorites = favorites.filter(f => f !== id);
-    showToast('تمت الإزالة من المفضلة', 'fav');
+    showToast('تمت الإزالة من المفضلة');
   } else {
     favorites.push(id);
-    showToast('أُضيف إلى المفضلة ❤️', 'fav');
+    showToast('أُضيف إلى المفضلة ❤️');
   }
   saveFavorites();
   document.querySelectorAll('.fav-btn[data-id="' + id + '"]').forEach(btn => {
@@ -111,6 +111,7 @@ async function loadData() {
     renderAgenciesMarquee(agenciesData);
     renderCatTabs();
     renderProducts('all');
+    initProductsSearch();
   } catch {
     $('productsGrid').innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
@@ -195,6 +196,31 @@ function filterByAgency(agencyId, agencyName) {
 }
 
 // ══════════════════════════════════════════════════════
+// Products Search
+// ══════════════════════════════════════════════════════
+let productsSearchTerm = '';
+
+function initProductsSearch() {
+  const searchInput = $('productsSearch');
+  const clearBtn    = $('searchClearBtn');
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', function () {
+    productsSearchTerm = this.value.trim().toLowerCase();
+    clearBtn.style.display = productsSearchTerm ? 'block' : 'none';
+    renderProducts(currentCat);
+  });
+
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    productsSearchTerm = '';
+    clearBtn.style.display = 'none';
+    searchInput.focus();
+    renderProducts(currentCat);
+  });
+}
+
+// ══════════════════════════════════════════════════════
 // Category Tabs
 // ══════════════════════════════════════════════════════
 function renderCatTabs() {
@@ -266,10 +292,20 @@ function renderProducts(catId) {
     filtered = allItems.filter(i => i.category?._id === catId || i.category === catId);
   }
 
+  // Apply search filter
+  if (productsSearchTerm) {
+    filtered = filtered.filter(i =>
+      (i.nameAr||'').toLowerCase().includes(productsSearchTerm) ||
+      (i.name||'').toLowerCase().includes(productsSearchTerm) ||
+      (i.descriptionAr||'').toLowerCase().includes(productsSearchTerm) ||
+      (i.description||'').toLowerCase().includes(productsSearchTerm)
+    );
+  }
+
   if (!filtered.length) {
-    const icon = catId==='discounts'?'🏷️':catId==='favorites'?'❤️':'☕';
-    const msg  = catId==='discounts'?'لا توجد عروض حالياً':catId==='favorites'?'لا توجد منتجات في المفضلة':'لا توجد منتجات';
-    const sub  = catId==='discounts'?'لا توجد منتجات مخفضة في الوقت الحالي':catId==='favorites'?'اضغط على ❤️ في أي منتج لإضافته هنا':'لا يوجد منتجات في هذا القسم حالياً';
+    const icon = productsSearchTerm ? '🔍' : catId==='discounts'?'🏷️':catId==='favorites'?'❤️':'☕';
+    const msg  = productsSearchTerm ? 'لا توجد نتائج' : catId==='discounts'?'لا توجد عروض حالياً':catId==='favorites'?'لا توجد منتجات في المفضلة':'لا توجد منتجات';
+    const sub  = productsSearchTerm ? `لم نجد منتجاً يطابق "${productsSearchTerm}"` : catId==='discounts'?'لا توجد منتجات مخفضة في الوقت الحالي':catId==='favorites'?'اضغط على ❤️ في أي منتج لإضافته هنا':'لا يوجد منتجات في هذا القسم حالياً';
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">${icon}</div><h3>${msg}</h3><p>${sub}</p></div>`;
     return;
   }

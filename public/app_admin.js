@@ -80,6 +80,7 @@ async function initDashboard() {
   $('dashboardScreen').style.display = 'block';
   await Promise.all([loadCategories(), loadItems(), loadOrders(), loadAdmins(), loadAgencies(), loadPromoCodes()]);
   startSSE();
+  updateNotifToggleUI();
 }
 
 function logout() {
@@ -132,6 +133,60 @@ function updatePendingBadge(n) {
 }
 
 // ══════════════════════════════════════════════════════
+// Notification Sound & Toggle
+// ══════════════════════════════════════════════════════
+let notifSoundEnabled = localStorage.getItem('me_notif_sound') !== 'false';
+
+function updateNotifToggleUI() {
+  const btn   = $('notifToggleBtn');
+  const label = $('notifToggleLabel');
+  if (!btn || !label) return;
+  if (notifSoundEnabled) {
+    btn.style.background   = 'rgba(34,197,94,.12)';
+    btn.style.borderColor  = 'rgba(34,197,94,.35)';
+    btn.style.color        = '#16a34a';
+    btn.innerHTML          = '🔔 <span id="notifToggleLabel">الإشعارات مفعلة</span>';
+  } else {
+    btn.style.background   = 'rgba(148,163,184,.10)';
+    btn.style.borderColor  = 'rgba(148,163,184,.3)';
+    btn.style.color        = 'var(--text-secondary)';
+    btn.innerHTML          = '🔕 <span id="notifToggleLabel">الإشعارات موقوفة</span>';
+  }
+}
+
+function toggleNotifSound() {
+  notifSoundEnabled = !notifSoundEnabled;
+  localStorage.setItem('me_notif_sound', notifSoundEnabled ? 'true' : 'false');
+  updateNotifToggleUI();
+  showToast(notifSoundEnabled ? '🔔 تم تفعيل صوت الإشعارات' : '🔕 تم إيقاف صوت الإشعارات', 'info');
+}
+
+function playNotifSound() {
+  if (!notifSoundEnabled) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Play two-tone chime
+    const playTone = (freq, startTime, duration) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type      = 'sine';
+      osc.frequency.setValueAtTime(freq, startTime);
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(0.4, startTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    };
+    const now = ctx.currentTime;
+    playTone(880, now,       0.18);
+    playTone(1108, now + 0.2, 0.28);
+    playTone(1320, now + 0.45, 0.35);
+  } catch (e) {}
+}
+
+// ══════════════════════════════════════════════════════
 // SSE
 // ══════════════════════════════════════════════════════
 function startSSE() {
@@ -142,7 +197,7 @@ function startSSE() {
   });
   sseSource.addEventListener('newOrder', e => {
     const o = JSON.parse(e.data);
-    showOrderNotif(o); loadOrders(); refreshStats();
+    showOrderNotif(o); playNotifSound(); loadOrders(); refreshStats();
   });
   sseSource.onerror = () => {
     if($('sseStatus')) { $('sseStatus').textContent='إعادة الاتصال...'; $('sseStatus').style.color='#f39c12'; }
