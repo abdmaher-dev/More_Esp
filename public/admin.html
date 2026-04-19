@@ -170,6 +170,46 @@
     .admin-chip { display:inline-flex; align-items:center; gap:8px; background:var(--gold-dim); border:1px solid var(--border-gold); border-radius:20px; padding:6px 14px; font-size:13px; color:var(--g500); margin:4px; }
     .admin-chip .del-btn { color:#e74c3c; cursor:pointer; font-size:16px; line-height:1; }
     .admin-chip .del-btn:hover { color:#c0392b; }
+
+    /* ══ ADMIN RESPONSIVE ══ */
+    .admin-main{padding:clamp(12px,3vw,32px)}
+    .admin-page-title{font-size:clamp(18px,4vw,28px)}
+    .stat-cards{grid-template-columns:repeat(auto-fit,minmax(min(150px,45%),1fr));gap:12px;margin-bottom:20px}
+    .stat-card{padding:clamp(14px,2.5vw,24px)}
+    .stat-card-value{font-size:clamp(26px,5vw,40px)}
+    .admin-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .admin-table{min-width:560px}
+    .admin-table th,.admin-table td{padding:clamp(8px,1.5vw,14px) clamp(10px,1.5vw,18px);white-space:nowrap}
+    .item-img{width:40px;height:40px}
+    .table-search{flex-wrap:wrap;gap:8px}
+    .table-search input{min-width:min(200px,100%)}
+    .admin-topbar{padding:0 clamp(12px,3vw,32px);display:flex;align-items:center;justify-content:space-between;height:60px;gap:10px}
+    .admin-topbar .admin-page-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .admin-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;transition:opacity .25s}
+    .admin-sidebar-overlay.show{display:block}
+    @media(max-width:1024px){
+      .admin-sidebar{z-index:100}
+    }
+    @media(max-width:640px){
+      .modal{max-width:100% !important;border-radius:16px 16px 0 0 !important;position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;max-height:92vh;transform:none !important}
+      .modal-overlay{align-items:flex-end !important;padding:0 !important}
+      .modal-overlay.open .modal{transform:none !important}
+      .modal-body{padding:14px 16px}
+      .modal-header{padding:14px 16px 12px}
+      .modal-footer{padding:10px 16px 16px;flex-direction:column}
+      .modal-footer .btn{width:100% !important;justify-content:center !important}
+      .form-row{grid-template-columns:1fr !important}
+      .settings-section{padding:16px}
+      .table-search .btn{width:100%;justify-content:center}
+    }
+    @media(max-width:500px){
+      .admin-main{padding:10px}
+      .stat-cards{grid-template-columns:1fr 1fr;gap:8px}
+      .stat-card-value{font-size:clamp(22px,5vw,30px)}
+      .pagination{gap:4px}
+      .page-btn{min-width:30px;height:30px;font-size:12px;padding:0 8px}
+      .admin-topbar{height:52px}
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 </head>
@@ -203,6 +243,7 @@
 
 <!-- ─── Dashboard ────────────────────────────────────────────────────────── -->
 <div id="dashboardScreen" style="display:none">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
 
   <aside class="admin-sidebar" id="adminSidebar">
     <div class="admin-sidebar-logo" style="padding:20px 24px;border-bottom:1px solid var(--border)">

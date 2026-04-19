@@ -635,14 +635,26 @@ $('applyPromoBtn').addEventListener('click', async () => {
 $('confirmOrderBtn').addEventListener('click', async () => {
   const name     = $('orderName').value.trim();
   const phone    = $('orderPhone').value.trim();
-  const location = $('orderLocation').value.trim();
+  const province  = $('orderProvince')?.value?.trim() || '';
+  const address   = $('orderAddress')?.value?.trim()   || '';
+  const location  = province && address ? province + ' - ' + address : province || address || $('orderLocation')?.value?.trim() || '';
   const notes    = $('orderNotes').value.trim();
 
-  if (!name || !phone || !location) {
-    showToast('يرجى إدخال الاسم والهاتف والموقع', 'error');
+  if (!name || !cleanPhone || !location) {
+    showToast('يرجى إدخال الاسم والهاتف والمحافظة والعنوان', 'error');
     return;
   }
-  if (!/^[0-9]{11}$/.test(phone)) { showToast('رقم الهاتف يجب أن يكون 11 رقماً بالضبط', 'error'); return; }
+  if (!province) { showToast('يرجى اختيار المحافظة', 'error'); return; }
+  if (!address)  { showToast('يرجى إدخال العنوان التفصيلي', 'error'); return; }
+  // Accept: 07xxxxxxxxx (11 digits) OR +9647xxxxxxxxx OR 009647xxxxxxxxx
+  const cleanPhone = phone.replace(/\s+/g, '');
+  const iraqLocal    = /^07[3-9]\d{8}$/.test(cleanPhone);
+  const iraqIntlPlus = /^\+9647[3-9]\d{8}$/.test(cleanPhone);
+  const iraqIntl00   = /^009647[3-9]\d{8}$/.test(cleanPhone);
+  if (!iraqLocal && !iraqIntlPlus && !iraqIntl00) {
+    showToast('رقم الهاتف غير صحيح. أمثلة: 07730949424 أو +9647730949424', 'error');
+    return;
+  }
 
   const btn = $('confirmOrderBtn');
   btn.disabled = true;
@@ -693,7 +705,8 @@ $('confirmOrderBtn').addEventListener('click', async () => {
 
     $('orderModalOverlay').classList.remove('open');
     cart = []; appliedPromo = null; saveCart(); updateCartUI();
-    ['orderName','orderPhone','orderLocation','orderNotes','promoCodeInput'].forEach(id => $(id).value = '');
+    ['orderName','orderPhone','orderAddress','orderNotes','promoCodeInput'].forEach(id => { if($(id)) $(id).value = ''; });
+    if($('orderProvince')) $('orderProvince').value = '';
     $('promoResult').innerHTML = '';
     showSuccessScreen();
   } catch (err) {

@@ -320,6 +320,65 @@
 }
     
 
+
+    /* ══ RESPONSIVE IMPROVEMENTS ══ */
+    /* fluid container */
+    .container{width:min(1200px,100%);padding-inline:clamp(12px,4vw,24px)}
+
+    /* NAV mobile full width */
+    @media(max-width:768px){
+      .nav-inner{height:56px}
+      .nav-logo{font-size:16px}
+      .nav-logo img{width:32px;height:32px}
+      .cart-btn{width:36px;height:36px;font-size:16px}
+      .mobile-nav a{padding:12px 16px}
+      .hero-content{padding:40px 0}
+      .hero-subtitle{font-size:15px}
+      .hero-cta .btn{padding:11px 20px;font-size:13px}
+      .section{padding:48px 0}
+      .section-title{font-size:clamp(22px,5vw,32px)}
+      .products-grid{grid-template-columns:repeat(auto-fill,minmax(min(160px,45%),1fr));gap:12px;margin-top:16px}
+      .skeleton-card{height:260px}
+      .product-card-name{font-size:14px}
+      .product-card-body{padding:12px 14px 14px}
+      .product-price .current{font-size:16px}
+      .cat-tabs-wrap{top:56px}
+      /* modal full screen on mobile */
+      .modal{max-height:95vh;border-radius:16px 16px 0 0;width:100%;position:fixed;bottom:0;left:0;right:0;transform:none !important}
+      .modal-overlay{align-items:flex-end;padding:0}
+      .modal-overlay.open .modal{transform:none !important}
+      .product-modal-inner{grid-template-columns:1fr;display:flex;flex-direction:column;max-height:90vh;overflow-y:auto}
+      .product-modal-img{max-height:45vw;border-radius:0}
+      .product-modal-body{padding:16px}
+      .product-modal-name{font-size:18px}
+      .product-modal-price .cur{font-size:24px}
+      /* cart sidebar full width */
+      .cart-sidebar{width:100vw}
+      /* success card */
+      .success-card{padding:36px 24px}
+      .success-card h2{font-size:22px}
+      /* toast bottom center */
+      .toast-container{left:50%;transform:translateX(-50%);bottom:16px;width:calc(100% - 32px);align-items:center}
+      .toast{max-width:100%;width:100%;justify-content:center}
+      /* footer */
+      .footer{padding:32px 0}
+    }
+    @media(max-width:480px){
+      .container{padding-inline:12px}
+      .products-grid{grid-template-columns:1fr 1fr;gap:10px}
+      .hero-title{font-size:clamp(26px,7vw,34px)}
+      .section{padding:36px 0}
+      .stat-cards-grid{grid-template-columns:1fr}
+      .section-header{margin-bottom:32px}
+      .product-modal-actions{flex-direction:column}
+      .product-modal-actions .btn{width:100%;justify-content:center}
+      .modal-footer{flex-direction:column}
+      .modal-footer .btn{width:100%;justify-content:center}
+      .cart-item-img{width:52px;height:52px}
+      .breadcrumbs{padding:8px 0 16px;font-size:11px}
+    }
+    /* form select RTL fix */
+    select.form-input{padding-left:8px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%2394A3B8' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:left 12px center;padding-left:32px;appearance:none;-webkit-appearance:none}
   </style>
 </head>
 <body>
@@ -463,8 +522,24 @@
     <div class="modal-header"><h3>تأكيد الطلب</h3><p>أدخل بياناتك وسنتواصل معك في أقرب وقت</p></div>
     <div class="modal-body">
       <div class="form-group"><label class="form-label">الاسم الكامل *</label><input type="text" class="form-input" id="orderName" placeholder="أدخل اسمك الكامل" autocomplete="name"></div>
-      <div class="form-group"><label class="form-label">رقم الهاتف *</label><input type="tel" class="form-input" id="orderPhone" placeholder="07xxxxxxxxx" autocomplete="tel"></div>
-      <div class="form-group"><label class="form-label">موقع التوصيل *</label><input type="text" class="form-input" id="orderLocation" placeholder="المدينة، الحي، الشارع..."></div>
+      <div class="form-group"><label class="form-label">رقم الهاتف *</label><input type="tel" class="form-input" id="orderPhone" placeholder="07xxxxxxxxx أو +9647xxxxxxxxx" autocomplete="tel"></div>
+      <div class="form-group">
+        <label class="form-label">المحافظة *</label>
+        <select class="form-input" id="orderProvince" style="appearance:auto;-webkit-appearance:auto">
+          <option value="">اختر المحافظة...</option>
+          <option>بغداد</option><option>البصرة</option><option>نينوى</option>
+          <option>أربيل</option><option>النجف</option><option>كربلاء</option>
+          <option>الأنبار</option><option>ديالى</option><option>صلاح الدين</option>
+          <option>كركوك</option><option>ذي قار</option><option>المثنى</option>
+          <option>القادسية</option><option>ميسان</option><option>واسط</option>
+          <option>بابل</option><option>السليمانية</option><option>دهوك</option>
+          <option>حلبجة</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">العنوان التفصيلي * <small style="font-weight:400;color:var(--g300)">(الحي، الشارع، رقم الدار)</small></label>
+        <input type="text" class="form-input" id="orderAddress" placeholder="مثال: حي الجامعة، شارع الرشيد، بناية 5">
+      </div>
       <div class="form-group"><label class="form-label">ملاحظات إضافية (اختياري)</label><textarea class="form-textarea" id="orderNotes" placeholder="أي تفاصيل إضافية..."></textarea></div>
       <div class="form-group">
         <label class="form-label">بروموكود (اختياري)</label>
