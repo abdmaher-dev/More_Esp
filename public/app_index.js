@@ -635,26 +635,27 @@ $('applyPromoBtn').addEventListener('click', async () => {
 $('confirmOrderBtn').addEventListener('click', async () => {
   const name     = $('orderName').value.trim();
   const phone    = $('orderPhone').value.trim();
-  const province  = $('orderProvince')?.value?.trim() || '';
-  const address   = $('orderAddress')?.value?.trim()   || '';
-  const location  = province && address ? province + ' - ' + address : province || address || $('orderLocation')?.value?.trim() || '';
+  const province = ($('orderProvince')?.value || '').trim();
+  const address  = ($('orderAddress')?.value  || '').trim();
   const notes    = $('orderNotes').value.trim();
+  const location = province && address ? province + ' - ' + address : province || address || '';
 
-  if (!name || !cleanPhone || !location) {
-    showToast('يرجى إدخال الاسم والهاتف والمحافظة والعنوان', 'error');
-    return;
-  }
+  // التحقق من الحقول المطلوبة
+  if (!name)     { showToast('يرجى إدخال اسمك الكامل', 'error'); return; }
+  if (!phone)    { showToast('يرجى إدخال رقم الهاتف', 'error'); return; }
   if (!province) { showToast('يرجى اختيار المحافظة', 'error'); return; }
   if (!address)  { showToast('يرجى إدخال العنوان التفصيلي', 'error'); return; }
-  // Accept: 07xxxxxxxxx (11 digits) OR +9647xxxxxxxxx OR 009647xxxxxxxxx
+
+  // التحقق من صحة رقم الهاتف العراقي
   const cleanPhone = phone.replace(/\s+/g, '');
   const iraqLocal    = /^07[3-9]\d{8}$/.test(cleanPhone);
   const iraqIntlPlus = /^\+9647[3-9]\d{8}$/.test(cleanPhone);
   const iraqIntl00   = /^009647[3-9]\d{8}$/.test(cleanPhone);
   if (!iraqLocal && !iraqIntlPlus && !iraqIntl00) {
-    showToast('رقم الهاتف غير صحيح. أمثلة: 07730949424 أو +9647730949424', 'error');
+    showToast('رقم الهاتف غير صحيح. مثال: 07730949424 أو +9647730949424', 'error');
     return;
   }
+
 
   const btn = $('confirmOrderBtn');
   btn.disabled = true;
@@ -738,6 +739,6 @@ const fadeEls = document.querySelectorAll('.fade-in');
 if(fadeEls.length){
   const obs = new IntersectionObserver(entries=>{
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); obs.unobserve(e.target); } });
-  }, { threshold:0.3 });
+  }, { threshold:0.2 });
   fadeEls.forEach(el=>obs.observe(el));
 }
