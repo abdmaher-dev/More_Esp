@@ -44,7 +44,7 @@ const categorySchema = new mongoose.Schema({
   name:        { type: String, default: '' },          // اختياري الآن
   slug:        { type: String, required: true, unique: true },
   description: { type: String, default: '' },
-  icon:        { type: String, default: '☕' },
+  icon:        { type: String, default: '' },
   order:       { type: Number, default: 1 }            // يبدأ من 1
 }, { timestamps: true });
 
@@ -270,7 +270,7 @@ app.post('/api/admin/categories', auth, async (req, res) => {
     const slug = await uniqueSlug(name || nameAr);
     const cat  = await new Category({
       nameAr, name: name||nameAr, description: description||''
-      , icon: icon||'☕', slug, order: parseInt(order)||1
+      , icon: icon||'', slug, order: parseInt(order)||1
     }).save();
     res.status(201).json(cat);
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -291,7 +291,7 @@ app.put('/api/admin/categories/:id', auth, async (req, res) => {
     const update = {
       nameAr, name: name||nameAr||''
       , description: description||''
-      , icon: icon||'☕', order: parseInt(order)||1
+      , icon: icon||'', order: parseInt(order)||1
     };
     if (name || nameAr) update.slug = await uniqueSlug(name||nameAr, req.params.id);
     const cat = await Category.findByIdAndUpdate(req.params.id, update, { new: true });

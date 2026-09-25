@@ -160,7 +160,7 @@ function filterByAgency(agencyId, agencyName) {
   });
   $('breadcrumbCurrent').textContent = agencyName;
   if (!filtered.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🏢</div><h3>لا توجد منتجات لهذه الوكالة</h3></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon"></div><h3>لا توجد منتجات لهذه الوكالة</h3></div>`;
     return;
   }
   grid.innerHTML = filtered.map((item, i) => {
@@ -225,14 +225,14 @@ function initProductsSearch() {
 // ══════════════════════════════════════════════════════
 function renderCatTabs() {
   const tabs = $('catTabs');
-  tabs.innerHTML = `<button class="cat-tab active" data-cat="all"><span class="tab-icon">☕</span> الكل</button>
-  <button class="cat-tab" data-cat="discounts"><span class="tab-icon">🏷️</span> الخصومات</button>
-  <button class="cat-tab fav-tab" data-cat="favorites"><span class="tab-icon">❤️</span> المفضلة</button>`;
+  tabs.innerHTML = `<button class="cat-tab active" data-cat="all"><span class="tab-icon"></span> الكل</button>
+  <button class="cat-tab" data-cat="discounts"><span class="tab-icon"></span> الخصومات</button>
+  <button class="cat-tab fav-tab" data-cat="favorites"><span class="tab-icon"></span> المفضلة</button>`;
   categories.forEach(c => {
     const b = document.createElement('button');
     b.className   = 'cat-tab';
     b.dataset.cat = c._id;
-    b.innerHTML   = `<span class="tab-icon">${c.icon||'☕'}</span> ${c.nameAr||c.name}`;
+    b.innerHTML   = `<span class="tab-icon">${c.icon||''}</span> ${c.nameAr||c.name}`;
     tabs.appendChild(b);
   });
   // Add agency tabs if agencies exist
@@ -245,7 +245,7 @@ function renderCatTabs() {
       b.className        = 'cat-tab';
       b.dataset.cat      = 'agency:' + a._id;
       b.dataset.agencyId = a._id;
-      b.innerHTML        = `<span class="tab-icon">🏢</span> ${a.nameAr}`;
+      b.innerHTML        = `<span class="tab-icon"></span> ${a.nameAr}`;
       tabs.appendChild(b);
     });
   }
@@ -303,7 +303,7 @@ function renderProducts(catId) {
   }
 
   if (!filtered.length) {
-    const icon = productsSearchTerm ? '🔍' : catId==='discounts'?'🏷️':catId==='favorites'?'❤️':'☕';
+    const icon = productsSearchTerm ? '🔍' : catId==='discounts'?'🏷️':catId==='favorites'?'':'';
     const msg  = productsSearchTerm ? 'لا توجد نتائج' : catId==='discounts'?'لا توجد عروض حالياً':catId==='favorites'?'لا توجد منتجات في المفضلة':'لا توجد منتجات';
     const sub  = productsSearchTerm ? `لم نجد منتجاً يطابق "${productsSearchTerm}"` : catId==='discounts'?'لا توجد منتجات مخفضة في الوقت الحالي':catId==='favorites'?'اضغط على ❤️ في أي منتج لإضافته هنا':'لا يوجد منتجات في هذا القسم حالياً';
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">${icon}</div><h3>${msg}</h3><p>${sub}</p></div>`;

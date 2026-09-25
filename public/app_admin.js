@@ -242,7 +242,7 @@ function renderCatsTable() {
   b.innerHTML = [...categories].sort((a,c)=>(a.order||1)-(c.order||1)).map(c=>`
     <tr data-id="${c._id}">
       <td><span class="drag-handle" title="اسحب لإعادة الترتيب">⠿</span></td>
-      <td style="font-size:22px">${c.icon||'☕'}</td>
+      <td style="font-size:22px">${c.icon||''}</td>
       <td style="font-weight:500;color:var(--g900)">${escapeHtml(c.nameAr||c.name)}</td>
       <td style="color:var(--g500);font-size:13px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(c.description||'–')}</td>
       <td><div style="display:flex;gap:8px">
@@ -258,7 +258,7 @@ function renderCatsTable() {
 
 function populateCatSelects() {
   const catOpts = categories.map(c=>`<option value="${c._id}" data-type="cat">${c.nameAr||c.name}</option>`).join('');
-  const agencyOpts = agencies.map(a=>`<option value="agency:${a._id}" data-type="agency">${a.nameAr} 🏢</option>`).join('');
+  const agencyOpts = agencies.map(a=>`<option value="agency:${a._id}" data-type="agency">${a.nameAr} </option>`).join('');
   $('itemCategory').innerHTML = '<option value="">اختر القسم...</option>' + catOpts + (agencyOpts ? '<optgroup label="الوكالات">'+agencyOpts+'</optgroup>' : '');
   $('filterCatSelect').innerHTML = '<option value="">كل الأقسام</option>' + catOpts;
   // Also populate agency item select in promo modal
@@ -276,7 +276,7 @@ function toggleItemAgencyField(val) {
 $('addCatBtn').addEventListener('click', () => {
   $('catModalTitle').textContent='إضافة قسم جديد';
   ['catId','catNameAr','catDesc'].forEach(id=>$(id).value='');
-  $('catIcon').value='☕'; $('catOrder').value='1';
+  $('catIcon').value=''; $('catOrder').value='1';
   $('catModalOverlay').classList.add('open');
 });
 function openEditCat(id) {
@@ -284,7 +284,7 @@ function openEditCat(id) {
   $('catModalTitle').textContent='تعديل القسم';
   $('catId').value=$('catNameAr').value=(c.nameAr||c.name)||'';
   $('catId').value=c._id; $('catNameAr').value=c.nameAr||c.name||'';
-  $('catIcon').value=c.icon||'☕'; $('catOrder').value=c.order??1;
+  $('catIcon').value=c.icon||''; $('catOrder').value=c.order??1;
   $('catDesc').value=c.description||'';
   $('catModalOverlay').classList.add('open');
 }
@@ -299,7 +299,7 @@ $('saveCatBtn').addEventListener('click', async()=>{
   try {
     const url=id?`/api/admin/categories/${id}`:'/api/admin/categories';
     const res=await fetch(url,{method:id?'PUT':'POST',headers:authH(),body:JSON.stringify({
-      nameAr, name:nameAr, icon:$('catIcon').value.trim()||'☕',
+      nameAr, name:nameAr, icon:$('catIcon').value.trim()||'',
       order:parseInt($('catOrder').value)||1, description:$('catDesc').value.trim()
     })});
     if(!res.ok){const d=await res.json();throw new Error(d.error);}
@@ -805,7 +805,7 @@ function renderAgenciesTable() {
   b.innerHTML = [...agencies].sort((a,c) => (a.order||1)-(c.order||1)).map(a => `
     <tr data-id="${a._id}">
       <td><span class="drag-handle" title="اسحب لإعادة الترتيب">⠿</span></td>
-      <td>${a.image ? `<img src="${escapeHtml(a.image)}" style="width:48px;height:48px;object-fit:cover;border-radius:6px" onerror="this.src='./def_image.webp'">` : '<span style="font-size:24px">🏢</span>'}</td>
+      <td>${a.image ? `<img src="${escapeHtml(a.image)}" style="width:48px;height:48px;object-fit:cover;border-radius:6px" onerror="this.src='./def_image.webp'">` : '<span style="font-size:24px"></span>'}</td>
       <td style="font-weight:500;color:var(--g900)">${escapeHtml(a.nameAr)}</td>
       <td style="color:var(--g500);font-size:13px">${escapeHtml(a.description||'–')}</td>
       <td><div style="display:flex;gap:8px">
